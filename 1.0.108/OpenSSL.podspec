@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.homepage        = "https://github.com/FredericJacobs/OpenSSL-Pod"
   s.license         = 'BSD-style Open Source'
   s.source          = { :http => "https://www.openssl.org/source/openssl-1.0.1h.tar.gz"}
-  s.preserve_paths  = "file.tgz", "lib/*", "openssl/include/*", "include/*"
+  s.preserve_paths  = "file.tgz", "lib/*", "openssl/include/*", "include/*", "include/**/*.h", "crypto/*.h", "crypto/**/*.h", "e_os.h", "e_os2.h", "ssl/*.h", "ssl/**/*.h", "MacOS/*.h"
   s.prepare_command = <<-CMD
 
     VERSION="1.0.1h"
@@ -82,7 +82,7 @@ Pod::Spec.new do |s|
 
   s.header_dir   = "openssl"
   s.platform     = :ios
-  s.source_files = "include/**/*.h", "openssl/include/**/*.h"
+  s.source_files = "include/**/*.h", "openssl/include/**/*.h" , "crypto/*.h", "crypto/**/*.h", "e_os.h", "e_os2.h", "ssl/*.h", "ssl/**/*.h", "MacOS/*.h"
   s.library	     = 'crypto', 'ssl'
   s.xcconfig     = {'LIBRARY_SEARCH_PATHS' => '"$(PODS_ROOT)/OpenSSL/lib"'}
   s.requires_arc = false
