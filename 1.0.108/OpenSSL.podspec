@@ -6,10 +6,13 @@ Pod::Spec.new do |s|
 
   s.homepage        = "https://github.com/FredericJacobs/OpenSSL-Pod"
   s.license         = 'BSD-style Open Source'
-  s.source          = { :http => "https://www.openssl.org/source/openssl-1.0.1h.tar.gz"}
-  s.preserve_paths  = "file.tgz", "lib/*", "openssl/include/*", "include/*", "include/**/*.h", "crypto/*.h", "crypto/**/*.h", "e_os.h", "e_os2.h", "ssl/*.h", "ssl/**/*.h", "MacOS/*.h"
+  s.source          = { :http => "https://www.openssl.org/source/openssl-1.0.1h.tar.gz", :sha1 => "b2239599c8bf8f7fc48590a55205c26abe560bf8"}
+  s.preserve_paths  = "file.tgz", 
+  s.source_files    = "include/**/*.h"
+  s.header_mappings_dir = "include/openssl"
+  s.header_dir          = "openssl"
+  
   s.prepare_command = <<-CMD
-
     VERSION="1.0.1h"
     SDKVERSION=`/usr/bin/xcodebuild -version -sdk 2> /dev/null | grep SDKVersion | tail -n 1 |  awk '{ print $2 }'`
 
@@ -19,18 +22,37 @@ Pod::Spec.new do |s|
 
     mkdir -p "${CURRENTPATH}/bin"
     mkdir -p "${CURRENTPATH}/lib"
-    mkdir -p "${CURRENTPATH}/openssl"
+    mkdir -p "${CURRENTPATH}/include"
+    mkdir -p "${CURRENTPATH}/include/openssl"
 
-    hash=$(cat file.tgz | openssl dgst -sha1 | sed 's/^.* //')
-
-    if [ "$hash" != "b2239599c8bf8f7fc48590a55205c26abe560bf8" ]; then
-      echo "OpenSSL downloaded doesn't seem valid"
-      exit 1;
-    fi
 
     tar -xzf file.tgz
 
     cd openssl-${VERSION}
+
+    cd include
+
+    if [ -d openssl2 ]
+      then
+        rm -r openssl2
+    fi
+
+    mv openssl openssl2
+    mkdir -p openssl
+
+    cd openssl
+
+    for link in $(find ../openssl2 -type l)
+      do
+        dir=$(readlink $link)
+        cp $dir ../../../include/openssl
+    done
+
+    cd ..
+
+    rm -R openssl2
+
+    cd ..
 
     for ARCH in ${ARCHS}
     do
@@ -79,12 +101,12 @@ Pod::Spec.new do |s|
     rm -rf file.tgz
     echo "Done."
   CMD
+  
+  s.ios.platform    = :ios
+  s.ios.public_header_files = "include/**/*.h"
+  s.ios.vendored_libraries = "lib/libcrypto.a", "lib/libssl.a"
 
-  s.header_dir   = "openssl"
-  s.platform     = :ios
-  s.source_files = "include/**/*.h", "openssl/include/**/*.h" , "crypto/*.h", "crypto/**/*.h", "e_os.h", "e_os2.h", "ssl/*.h", "ssl/**/*.h", "MacOS/*.h"
-  s.library	     = 'crypto', 'ssl'
-  s.xcconfig     = {'LIBRARY_SEARCH_PATHS' => '"$(PODS_ROOT)/OpenSSL/lib"'}
+  s.libraries	     = 'crypto', 'ssl'
   s.requires_arc = false
 
 end
