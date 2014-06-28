@@ -7,11 +7,10 @@ Pod::Spec.new do |s|
   s.homepage        = "https://github.com/FredericJacobs/OpenSSL-Pod"
   s.license         = 'BSD-style Open Source'
   s.source          = { :http => "https://www.openssl.org/source/openssl-1.0.1h.tar.gz", :sha1 => "b2239599c8bf8f7fc48590a55205c26abe560bf8"}
-  s.preserve_paths  = "file.tgz", 
-  s.source_files    = "include/**/*.h"
-  s.header_mappings_dir = "include/openssl"
-  s.header_dir          = "openssl"
-  
+  s.preserve_paths  = "file.tgz", "opensslIncludes/*"
+  s.source_files    = "opensslIncludes/*.h", "**/*.h"
+  s.header_dir      = "openssl"
+
   s.prepare_command = <<-CMD
     VERSION="1.0.1h"
     SDKVERSION=`/usr/bin/xcodebuild -version -sdk 2> /dev/null | grep SDKVersion | tail -n 1 |  awk '{ print $2 }'`
@@ -22,41 +21,23 @@ Pod::Spec.new do |s|
 
     mkdir -p "${CURRENTPATH}/bin"
     mkdir -p "${CURRENTPATH}/lib"
-    mkdir -p "${CURRENTPATH}/include"
-    mkdir -p "${CURRENTPATH}/include/openssl"
-
+    mkdir -p "${CURRENTPATH}/opensslIncludes"
+    mkdir -p "${CURRENTPATH}/opensslIncludes/openssl"
 
     tar -xzf file.tgz
 
     cd openssl-${VERSION}
+    cd include/openssl
 
-    cd include
-
-    if [ -d openssl2 ]
-      then
-        rm -r openssl2
-    fi
-
-    mv openssl openssl2
-    mkdir -p openssl
-
-    cd openssl
-
-    for link in $(find ../openssl2 -type l)
+    for link in $(find . -type l)
       do
         dir=$(readlink $link)
-        cp $dir ../../../include/openssl
+        cp $dir ../../../opensslIncludes/openssl
     done
 
-    cd ..
-
-    rm -R openssl2
-
-    cd ..
-
+    cd ../..
     for ARCH in ${ARCHS}
     do
-
       CONFIGURE_FOR="iphoneos-cross"
 
       if [ "${ARCH}" == "i386" ] || [ "${ARCH}" == "x86_64" ] ;
@@ -102,11 +83,11 @@ Pod::Spec.new do |s|
     echo "Done."
   CMD
   
-  s.ios.platform    = :ios
-  s.ios.public_header_files = "include/**/*.h"
-  s.ios.vendored_libraries = "lib/libcrypto.a", "lib/libssl.a"
+  s.ios.platform            = :ios
+  s.ios.public_header_files = "opensslIncludes/*.h"
+  s.ios.vendored_libraries  = "lib/libcrypto.a", "lib/libssl.a"
 
-  s.libraries	     = 'crypto', 'ssl'
-  s.requires_arc = false
+  s.libraries	            = 'crypto', 'ssl'
+  s.requires_arc            = false
 
 end
