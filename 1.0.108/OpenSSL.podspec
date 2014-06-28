@@ -10,6 +10,7 @@ Pod::Spec.new do |s|
   s.preserve_paths  = "file.tgz", "opensslIncludes/*"
   s.source_files    = "opensslIncludes/*.h", "**/*.h"
   s.header_dir      = "openssl"
+  s.license	        = { :type => 'OpenSSL (OpenSSL/SSLeay)', :file => 'LICENSE.txt' }
 
   s.prepare_command = <<-CMD
     VERSION="1.0.1h"
@@ -82,7 +83,7 @@ Pod::Spec.new do |s|
     rm -rf file.tgz
     echo "Done."
   CMD
-  
+
   s.ios.platform            = :ios
   s.ios.public_header_files = "opensslIncludes/*.h"
   s.ios.vendored_libraries  = "lib/libcrypto.a", "lib/libssl.a"
