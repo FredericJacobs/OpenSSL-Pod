@@ -1,0 +1,6 @@
+.DS_Store
+file.tgz
+bin
+lib
+openssl-*
+opensslIncludes
