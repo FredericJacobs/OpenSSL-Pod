@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
   s.license	        = { :type => 'OpenSSL (OpenSSL/SSLeay)', :file => 'LICENSE' }
 
   s.prepare_command = "sh prepare_command.sh"
+  s.preserve_paths  = "prepare_command.sh"
 
   s.ios.platform            = :ios
   s.ios.public_header_files = "opensslIncludes/openssl/*.h"
