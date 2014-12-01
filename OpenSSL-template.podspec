@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
     SDKVERSION=`xcrun --sdk iphoneos --show-sdk-version 2> /dev/null`
 
     BASEPATH="${PWD}"
-    CURRENTPATH="/tmp/openssl"
+    CURRENTPATH="${TMPDIR}/openssl"
     ARCHS="i386 x86_64 armv7 armv7s arm64"
     DEVELOPER=`xcode-select -print-path`
 
