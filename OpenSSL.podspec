@@ -1,29 +1,34 @@
 Pod::Spec.new do |s|
   s.name            = "OpenSSL"
-  s.version         = "1.0.109"
+  s.version         = "1.0.212"
   s.summary         = "OpenSSL is an SSL/TLS and Crypto toolkit. Deprecated in Mac OS and gone in iOS, this spec gives your project non-deprecated OpenSSL support."
   s.author          = "OpenSSL Project <openssl-dev@openssl.org>"
 
   s.homepage        = "https://github.com/FredericJacobs/OpenSSL-Pod"
-  s.license         = 'BSD-style Open Source'
-  s.source          = { :http => "https://www.openssl.org/source/openssl-1.0.1i.tar.gz", :sha1 => "74eed314fa2c93006df8d26cd9fc630a101abd76"}
+  s.source          = { :http => "https://www.openssl.org/source/old/1.0.2/openssl-1.0.2l.tar.gz", :sha1 => "b58d5d0e9cea20e571d903aafa853e2ccd914138"}
   s.source_files    = "opensslIncludes/openssl/*.h"
   s.header_dir      = "openssl"
-  s.license	        = { :type => 'OpenSSL (OpenSSL/SSLeay)', :file => 'LICENSE' }
+  s.license         = { :type => 'OpenSSL (OpenSSL/SSLeay)', :file => 'LICENSE' }
 
   s.prepare_command = <<-CMD
-    VERSION="1.0.1i"
+    VERSION="1.0.2l"
     SDKVERSION=`xcrun --sdk iphoneos --show-sdk-version 2> /dev/null`
+    MIN_SDK_VERSION_FLAG="-miphoneos-version-min=7.0"
 
     BASEPATH="${PWD}"
-    CURRENTPATH="${TMPDIR}/openssl"
+    CURRENTPATH="/tmp/openssl"
     ARCHS="i386 x86_64 armv7 armv7s arm64"
     DEVELOPER=`xcode-select -print-path`
 
     mkdir -p "${CURRENTPATH}"
     mkdir -p "${CURRENTPATH}/bin"
+	
+	# Cocoapods no longer seems to leave the source file
+	# in the Pod directory as this script expects, so we
+	# download it again here.
+    echo "Downloading source..."
+	curl https://www.openssl.org/source/old/1.0.2/openssl-1.0.2l.tar.gz --output "${CURRENTPATH}/file.tgz"
 
-    cp "file.tgz" "${CURRENTPATH}/file.tgz"
     cd "${CURRENTPATH}"
     tar -xzf file.tgz
     cd "openssl-${VERSION}"
@@ -50,7 +55,7 @@ Pod::Spec.new do |s|
       echo "Building openssl-${VERSION} for ${PLATFORM} ${SDKVERSION} ${ARCH}"
       echo "Please stand by..."
 
-      export CC="${DEVELOPER}/usr/bin/gcc -arch ${ARCH} -miphoneos-version-min=${SDKVERSION}"
+      export CC="${DEVELOPER}/usr/bin/gcc -arch ${ARCH} ${MIN_SDK_VERSION_FLAG}"
       mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
       LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-openssl-${VERSION}.log"
 
@@ -85,7 +90,7 @@ Pod::Spec.new do |s|
     echo "Done."
   CMD
 
-  s.ios.platform            = :ios
+  s.ios.deployment_target   = "8.0"
   s.ios.public_header_files = "opensslIncludes/openssl/*.h"
   s.ios.vendored_libraries  = "lib/libcrypto.a", "lib/libssl.a"
 
