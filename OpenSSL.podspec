@@ -1,6 +1,6 @@
 # Configuration
 # Pod maintainer step 1 of 2. Modify the OPENSSL_VERSION.
-OPENSSL_VERSION="1.0.2m"
+OPENSSL_VERSION="1.0.2q"
 
 # Pod maintainer step 2 of 2. Update the checksum file
 #
@@ -10,7 +10,7 @@ OPENSSL_VERSION="1.0.2m"
 
 Pod::Spec.new do |s|
   s.name            = "OpenSSL"
-  s.version         = "1.0.213"
+  s.version         = "1.0.217"
   s.summary         = "OpenSSL is an SSL/TLS and Crypto toolkit. Deprecated in Mac OS and gone in iOS, this spec gives your project non-deprecated OpenSSL support."
   s.author          = "OpenSSL Project <openssl-dev@openssl.org>"
   s.source          = { http: "https://www.openssl.org/source/openssl-#{OPENSSL_VERSION}.tar.gz", sha256: "8c6ff15ec6b319b50788f42c7abc2890c08ba5a1cdcd3810eb9092deada37b0f" }
