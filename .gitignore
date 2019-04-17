@@ -1,0 +1,4 @@
+file.tgz
+*.tar.gz
+lib
+opensslIncludes
